@@ -85,17 +85,14 @@ window.onload = function () {
 
     // Finds the furthest blue square outside of the circle
     function findFurthestOutsideBlue(x,y, point){
-
         let distance = getDistance(x, y, point[0], point[1]);
         if(furthestOutsideBlue === null || distance > furthestOutsideBlue.distance){
-            console.log('changed!!!')
             furthestOutsideBlue = {
                 x: x,
                 y: y,
                 distance: distance,
                 point: point
             }
-            console.log(furthestOutsideBlue);
         }
     }
 
@@ -123,7 +120,7 @@ window.onload = function () {
         for(let k=0; k<360; k++){
             point = getPoint(k);
             if(xSquare <= point[0]+5 && xSquare >= point[0]-5){
-                if(ySquare <= point[1]+11 && ySquare >= point[1]-11){
+                if(ySquare <= point[1]+10 && ySquare >= point[1]-10){
 
                     if(insideCircle(xSquare, ySquare)){
                         findFurthestInsideBlue(xSquare,ySquare, point);
@@ -135,7 +132,7 @@ window.onload = function () {
                 }
             }
             if(ySquare <= point[1]+5 && ySquare >= point[1]-5){
-                if(xSquare <= point[0]+11 && xSquare >= point[0]-11){
+                if(xSquare <= point[0]+10 && xSquare >= point[0]-10){
                     if(insideCircle(xSquare, ySquare)){
                         findFurthestInsideBlue(xSquare,ySquare, point);
                     }
@@ -154,28 +151,53 @@ window.onload = function () {
 
     // Creates red circles based on furthest blue squares from circle
     function getRedCircles(){
-        if(furthestOutsideBlue.point[0]<=furthestOutsideBlue.x){
+        if(furthestOutsideBlue.point[0]<furthestOutsideBlue.x){
 
-            if(furthestOutsideBlue.point[1]<=furthestOutsideBlue.y){
+            if(furthestOutsideBlue.point[1]<furthestOutsideBlue.y){
 
                 // BOTTOM RIGHT
                 largeRedRadius = getDistance(center.x, center.y, furthestOutsideBlue.x+21, furthestOutsideBlue.y+21);
             }
-            else{
+            else if(furthestOutsideBlue.point[1]>furthestOutsideBlue.y){
                 // TOP RIGHT
                 largeRedRadius = getDistance(center.x, center.y, furthestOutsideBlue.x+21, furthestOutsideBlue.y-1);
             }
+            else{
+                // RIGHT
+                largeRedRadius = getDistance(center.x, center.y, furthestOutsideBlue.x+21, furthestOutsideBlue.y);
+            }
         }
-        else{
+        else if(furthestOutsideBlue.point[0]>furthestOutsideBlue.x){
 
             // BOTTOM LEFT
-            if(furthestOutsideBlue.point[1]<=furthestOutsideBlue.y){
+            if(furthestOutsideBlue.point[1]<furthestOutsideBlue.y){
                 largeRedRadius = getDistance(center.x, center.y, furthestOutsideBlue.x-1, furthestOutsideBlue.y+21);
             }
 
             // TOP LEFT
-            else{
+            else if(furthestOutsideBlue.point[1]>furthestOutsideBlue.y){
                 largeRedRadius = getDistance(center.x, center.y, furthestOutsideBlue.x-1, furthestOutsideBlue.y-1);
+            }
+            // LEFT
+            else {
+                largeRedRadius = getDistance(center.x, center.y, furthestOutsideBlue.x-1, furthestOutsideBlue.y);
+            }
+        }
+        else {
+
+            // BOTTOM
+            if(furthestOutsideBlue.point[1]<furthestOutsideBlue.y){
+                largeRedRadius = getDistance(center.x, center.y, furthestOutsideBlue.x, furthestOutsideBlue.y+21);
+            }
+
+            // TOP
+            else if(furthestOutsideBlue.point[1]>furthestOutsideBlue.y){
+                largeRedRadius = getDistance(center.x, center.y, furthestOutsideBlue.x, furthestOutsideBlue.y-21);
+            }
+
+            // ON CIRCLE
+            else {
+                largeRedRadius = getDistance(center.x, center.y, furthestOutsideBlue.x, furthestOutsideBlue.y);
             }
         }
 
@@ -206,6 +228,7 @@ window.onload = function () {
 
     fillGrid();
 
+    // When mouse is originally clicked
     canvas.onmousedown = function (e) {
         updateCanvas();
         endpt = null;
@@ -214,6 +237,7 @@ window.onload = function () {
             y: e.offsetY
         }
 
+        // When mouse is dragged
         this.onmousemove = function (e) {
             movingMouse = {
                 x: e.offsetX,
@@ -225,23 +249,14 @@ window.onload = function () {
     }
 
 
-
+    // When click is let go
     canvas.onmouseup = function (e) {
         endpt = {
             x: e.offsetX,
             y: e.offsetY
         }
         createBlueCircle();
-        //getBlueSquares();
-        //getRedCircles();
     }
-
-
-
-
-
-
-
 
 
 
