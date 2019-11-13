@@ -12,9 +12,10 @@ window.onload = function () {
     let smallRedRadius = null;
     let largeRedRadius = null;
     let squares = [];
+    let blueSquares = [];
 
     getSquares();
-
+    console.log(squares);
     // Creates squares array
     function getSquares() {
         let counter = 1;
@@ -69,69 +70,65 @@ window.onload = function () {
 
 
 
-        // Fills grid with squares
-        function fillGrid() {
-            for (let i = 1; i < squares.length; i++) {
-                if (endpt) {
-                    if (getBlueSquares(i)) {
-                        ctx.fillStyle = "blue";
-                    }
-                    else {
-                        ctx.fillStyle = "gray";
-                    }
+    // Fills grid with squares
+    function fillGrid() {
+        for (let i = 1; i < squares.length; i++) {
+            if (endpt) {
+                if (getBlueSquares(i)) {
+                    ctx.fillStyle = "blue";
                 }
                 else {
                     ctx.fillStyle = "gray";
                 }
-                ctx.fillRect(squares[i].x, squares[i].y, 10, 10);
-            }
-            if (endpt) {
-                createRedCircles();
-            }
-        }
-
-
-
-
-        // Creates blue circle
-        function createBlueCircle() {
-            updateCanvas();
-            if (endpt) {
-                radius = getDistance(center.x, center.y, endpt.x, endpt.y);
             }
             else {
-                radius = getDistance(center.x, center.y, movingMouse.x, movingMouse.y);
+                ctx.fillStyle = "gray";
             }
+            ctx.fillRect(squares[i].x, squares[i].y, 10, 10);
+        }
+        if (endpt) {
+            createRedCircles();
+        }
+    }
 
-            ctx.beginPath();
-            ctx.strokeStyle = "blue";
-            ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
-            ctx.stroke();
-            return;
+
+
+
+    // Creates blue circle
+    function createBlueCircle() {
+        updateCanvas();
+        if (endpt) {
+            radius = getDistance(center.x, center.y, endpt.x, endpt.y);
+        }
+        else {
+            radius = getDistance(center.x, center.y, movingMouse.x, movingMouse.y);
         }
 
+        ctx.beginPath();
+        ctx.strokeStyle = "blue";
+        ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
+        ctx.stroke();
+        return;
+    }
 
 
 
-        // Gets the coordinate on circle
-        function getPoint(angle) {
-            return {
-                x: center.x + (Math.cos(angle) * radius),
-                y: center.y + (Math.sin(angle) * radius),
-                width: 1,
-                height: 1
-            }
+
+    // Gets the coordinate on circle
+    function getPoint(angle, r) {
+        return {
+            x: center.x + (Math.cos(angle) * r),
+            y: center.y + (Math.sin(angle) * r),
+            width: 1,
+            height: 1
         }
+    }
 
 
-        // Distance between two coordinates
-        function getDistance(x1, y1, x2, y2) {
-            return Math.hypot(x1 - x2, y1 - y2);
-        }
-
-
-
-
+    // Distance between two coordinates
+    function getDistance(x1, y1, x2, y2) {
+        return Math.hypot(x1 - x2, y1 - y2);
+    }
 
 
 
@@ -140,137 +137,213 @@ window.onload = function () {
 
 
 
-        // Checks if square is close enough to the circle to be colored blue
-        function getBlueSquares(index) {
-            let point;
-            for (let k = 0; k < 360; k += 5) {
-                point = getPoint(k * (Math.PI / 180));
-                if (checkCollision(point, squares[index])) {
-                    getFurthest(index, point);
-                    return true;
+
+
+
+
+    // Checks if square is close enough to the circle to be colored blue
+    function getBlueSquares(index) {
+        let point;
+        for (let k = 0; k < 360; k += 5) {
+            point = getPoint(k * (Math.PI / 180), radius);
+            if (checkCollision(point, squares[index])) {
+                getFurthest(index, point);
+                if(!blueSquares.includes(squares[index])){
+                    blueSquares.push(squares[index]);
                 }
-            }
-            return false;
-        }
-
-
-
-
-        // Creates red circles based on furthest blue squares from circle
-        function createRedCircles() {
-
-            let XcenterOfSquare = furthestOutsideBlue.theSquare.x + 10;
-            let YcenterOfSquare = furthestOutsideBlue.theSquare.y + 10;
-
-            // LEFT
-            if(XcenterOfSquare < furthestOutsideBlue.circlePoint.x){
-                // TOP
-                if(YcenterOfSquare < furthestOutsideBlue.circlePoint.y){
-                    largeRedRadius = getDistance(center.x, center.y, furthestOutsideBlue.theSquare.x-1, furthestOutsideBlue.theSquare.y-1);
-                }
-                // BOTTOM
-                else if(YcenterOfSquare > furthestOutsideBlue.circlePoint.y){
-                    largeRedRadius = getDistance(center.x, center.y, furthestOutsideBlue.theSquare.x-1, furthestOutsideBlue.theSquare.y+21);
-                }
-                else{
-                    largeRedRadius = getDistance(center.x, center.y, furthestOutsideBlue.theSquare.x-1, furthestOutsideBlue.theSquare.y+10);
-                }
-            }
-
-            // RIGHT
-            else if(XcenterOfSquare > furthestOutsideBlue.circlePoint.x){
-                // TOP
-                if(YcenterOfSquare < furthestOutsideBlue.circlePoint.y){
-                    largeRedRadius = getDistance(center.x, center.y, furthestOutsideBlue.theSquare.x+21, furthestOutsideBlue.theSquare.y-1);
-                }
-                // BOTTOMN
-                else if(YcenterOfSquare > furthestOutsideBlue.circlePoint.y){
-                    largeRedRadius = getDistance(center.x, center.y, furthestOutsideBlue.theSquare.x+21, furthestOutsideBlue.theSquare.y+21);
-                }
-                else{
-                    largeRedRadius = getDistance(center.x, center.y, furthestOutsideBlue.theSquare.x+21, furthestOutsideBlue.theSquare.y+10);
-                }
-            }
-            // MID
-            else {
-                //TOP
-                if(YcenterOfSquare < furthestOutsideBlue.circlePoint.y){
-                    largeRedRadius = getDistance(center.x, center.y, furthestOutsideBlue.theSquare.x+10, furthestOutsideBlue.theSquare.y-1);
-                }
-                //BOTTOM
-                else if(YcenterOfSquare > furthestOutsideBlue.circlePoint.y){
-                    largeRedRadius = getDistance(center.x, center.y, furthestOutsideBlue.theSquare.x+10, furthestOutsideBlue.theSquare.y+21);
-                }
-            }
-
-            ctx.beginPath();
-            ctx.strokeStyle = "red";
-            ctx.arc(center.x, center.y, largeRedRadius, 0, 2 * Math.PI);
-            ctx.stroke();
-            return;
-        }
-
-
-
-
-        function checkCollision(rect1, rect2) {
-            if (rect1.x < rect2.x + rect2.width &&
-                rect1.x + rect1.width > rect2.x &&
-                rect1.y < rect2.y + rect2.height &&
-                rect1.y + rect1.height > rect2.y) {
                 return true;
             }
         }
+        return false;
+    }
 
 
 
 
+    function createRedCircles() {
 
+        largeRedRadius = radius;
+        smallRedRadius = radius;
+        outsideCircle(largeRedRadius);
+        insideCircle(smallRedRadius);
 
+        return;
+    }
 
-
-
-
-        fillGrid();
-
-        // When mouse is originally clicked
-        canvas.onmousedown = function (e) {
-            updateCanvas();
-            endpt = null;
-            center = {
-                x: e.offsetX,
-                y: e.offsetY
-            }
-
-            // When mouse is dragged
-            this.onmousemove = function (e) {
-                movingMouse = {
-                    x: e.offsetX,
-                    y: e.offsetY
+    function insideCircle(r) {
+        for (let i = 0; i < blueSquares.length; i++) {
+            for (let k = 0; k < 360; k += 5) {
+                point = getPoint(k * (Math.PI / 180), r);
+                while (checkCollision(point, blueSquares[i])) {
+                    smallRedRadius-=1
+                    insideCircle(smallRedRadius);
+                    
                 }
-                createBlueCircle()
             }
-
         }
+        ctx.beginPath();
+        ctx.strokeStyle = "red";
+        ctx.arc(center.x, center.y, smallRedRadius, 0, 2 * Math.PI);
+        ctx.stroke();
+        return ;
+    }
 
-
-        // When click is let go
-        canvas.onmouseup = function (e) {
-            endpt = {
-                x: e.offsetX,
-                y: e.offsetY
+    function outsideCircle(r) {
+        for (let i = 0; i < blueSquares.length; i++) {
+            for (let k = 0; k < 360; k += 5) {
+                point = getPoint(k * (Math.PI / 180), r);
+                while (checkCollision(point, blueSquares[i])) {
+                    largeRedRadius+=1
+                    outsideCircle(largeRedRadius);
+                    
+                }
             }
-            createBlueCircle();
         }
+        ctx.beginPath();
+        ctx.strokeStyle = "red";
+        ctx.arc(center.x, center.y, largeRedRadius, 0, 2 * Math.PI);
+        ctx.stroke();
+        return ;
+    }
 
 
 
-        //Updating canvas 
-        function updateCanvas() {
-            ctx.clearRect(0, 0, 430, 430);
-            fillGrid();
+
+
+
+    // // Creates red circles based on furthest blue squares from circle
+    // function createRedCircles() {
+
+    //     let XcenterOfSquare = furthestOutsideBlue.theSquare.x + 10;
+    //     let YcenterOfSquare = furthestOutsideBlue.theSquare.y + 10;
+
+    //     // LEFT
+    //     if(XcenterOfSquare < furthestOutsideBlue.circlePoint.x){
+    //         // TOP
+    //         if(YcenterOfSquare < furthestOutsideBlue.circlePoint.y){
+    //             largeRedRadius = getDistance(center.x, center.y, furthestOutsideBlue.theSquare.x-1, furthestOutsideBlue.theSquare.y-1);
+    //             console.log(furthestOutsideBlue);
+    //             console.log(radius);
+    //             console.log('{{{{{{}}}}}} ', largeRedRadius);
+    //         }
+    //         // BOTTOM
+    //         else if(YcenterOfSquare > furthestOutsideBlue.circlePoint.y){
+    //             largeRedRadius = getDistance(center.x, center.y, furthestOutsideBlue.theSquare.x-1, furthestOutsideBlue.theSquare.y+21);
+    //             console.log(radius);
+    //             console.log(',,,,,,,,,,,,, ', largeRedRadius);
+    //         }
+    //         else{
+    //             largeRedRadius = getDistance(center.x, center.y, furthestOutsideBlue.theSquare.x-1, furthestOutsideBlue.theSquare.y+10);
+    //             console.log(radius);
+    //             console.log('%%%%%%%%%%% ', largeRedRadius);
+    //         }
+    //     }
+
+    //     // RIGHT
+    //     else if(XcenterOfSquare > furthestOutsideBlue.circlePoint.x){
+    //         // TOP
+    //         if(YcenterOfSquare < furthestOutsideBlue.circlePoint.y){
+    //             largeRedRadius = getDistance(center.x, center.y, furthestOutsideBlue.theSquare.x+21, furthestOutsideBlue.theSquare.y-1);
+    //             console.log(radius);
+    //             console.log('@@@@@@@@@@@ ', largeRedRadius);
+    //         }
+    //         // BOTTOMN
+    //         else if(YcenterOfSquare > furthestOutsideBlue.circlePoint.y){
+    //             largeRedRadius = getDistance(center.x, center.y, furthestOutsideBlue.theSquare.x+21, furthestOutsideBlue.theSquare.y+21);
+    //             console.log(radius);
+    //             console.log('^^^^^^^^^^^ ', largeRedRadius);
+    //         }
+    //         else{
+    //             largeRedRadius = getDistance(center.x, center.y, furthestOutsideBlue.theSquare.x+21, furthestOutsideBlue.theSquare.y+10);
+    //             console.log(radius);
+    //             console.log('************* ', largeRedRadius);
+    //         }
+    //     }
+    //     // MID
+    //     else {
+    //         //TOP
+    //         if(YcenterOfSquare < furthestOutsideBlue.circlePoint.y){
+    //             largeRedRadius = getDistance(center.x, center.y, furthestOutsideBlue.theSquare.x+10, furthestOutsideBlue.theSquare.y-1);
+    //             console.log(radius);
+    //             console.log('&&&&&&&&&&& ', largeRedRadius);
+    //         }
+    //         //BOTTOM
+    //         else if(YcenterOfSquare > furthestOutsideBlue.circlePoint.y){
+    //             largeRedRadius = getDistance(center.x, center.y, furthestOutsideBlue.theSquare.x+10, furthestOutsideBlue.theSquare.y+21);
+    //             console.log(radius);
+    //             console.log('!!!!!!!!!!!!! ', largeRedRadius);
+    //         }
+    //     }
+
+    //     ctx.beginPath();
+    //     ctx.strokeStyle = "red";
+    //     ctx.arc(center.x, center.y, largeRedRadius, 0, 2 * Math.PI);
+    //     ctx.stroke();
+    //     return;
+    // }
+
+
+
+
+    function checkCollision(rect1, rect2) {
+        if (rect1.x < rect2.x + rect2.width &&
+            rect1.x + rect1.width > rect2.x &&
+            rect1.y < rect2.y + rect2.height &&
+            rect1.y + rect1.height > rect2.y) {
+            return true;
         }
     }
+
+
+
+
+
+
+
+
+
+
+    fillGrid();
+
+    // When mouse is originally clicked
+    canvas.onmousedown = function (e) {
+        updateCanvas();
+        blueSquares = [];
+        endpt = null;
+        center = {
+            x: e.offsetX,
+            y: e.offsetY
+        }
+
+        // When mouse is dragged
+        this.onmousemove = function (e) {
+            movingMouse = {
+                x: e.offsetX,
+                y: e.offsetY
+            }
+            createBlueCircle()
+        }
+
+    }
+
+
+    // When click is let go
+    canvas.onmouseup = function (e) {
+        endpt = {
+            x: e.offsetX,
+            y: e.offsetY
+        }
+        createBlueCircle();
+    }
+
+
+
+    //Updating canvas 
+    function updateCanvas() {
+        ctx.clearRect(0, 0, 430, 430);
+        fillGrid();
+    }
+}
 
 
 
