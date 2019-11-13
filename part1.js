@@ -4,6 +4,7 @@ window.onload = function () {
     var canvas = document.getElementById('canvas');
     var ctx = canvas.getContext('2d');
     let center = null;
+    let movingMouse;
     let endpt = null;
 
 
@@ -21,13 +22,18 @@ window.onload = function () {
 
 
 
-
     function createCircle(){
-        console.log('Center: ', center);
-        console.log('Endpt: ', endpt);
-        let radius = Math.hypot(center.x-endpt.x, center.y-endpt.y);
-        console.log('Radius: ', radius);
+        updateCanvas();
+        let radius
+        if(endpt){
+            radius = Math.hypot(center.x-endpt.x, center.y-endpt.y);
+        }
+        else {
+            radius = Math.hypot(center.x-movingMouse.x, center.y-movingMouse.y);
+        }
+
         ctx.beginPath();
+        ctx.strokeStyle = "blue";
         ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
         ctx.stroke();
         return;
@@ -40,13 +46,25 @@ window.onload = function () {
 
     fillGrid();
 
-
     canvas.onmousedown = function (e) {
+        updateCanvas();
+        endpt=null;
         center = {
             x: e.offsetX,
             y: e.offsetY
         }
+
+        this.onmousemove = function (e) {
+            movingMouse = {
+                x: e.offsetX,
+                y: e.offsetY
+            }
+            createCircle()
+        }
+
     }
+
+
 
 
     canvas.onmouseup = function (e) {
@@ -74,10 +92,9 @@ window.onload = function () {
 
     //Updating canvas 
     function updateCanvas() {
-        window.requestAnimationFrame(updateCanvas);
+        ctx.clearRect(0, 0, 430, 430);
+        fillGrid();
     }
-    window.requestAnimationFrame(updateCanvas);
-
 }
 
 
