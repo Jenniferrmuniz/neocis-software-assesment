@@ -13,7 +13,7 @@ window.onload = function () {
     let largeRedRadius = null;
 
 
-
+    // Fills grid with squares
     function fillGrid() {
         for (let i = 20; i <= 400; i += 20) {
             for (let j = 20; j <= 400; j += 20) {
@@ -32,12 +32,15 @@ window.onload = function () {
                 ctx.fillRect(i, j, 10, 10);
             }
         }
+        if(endpt){
+            getRedCircles();
+        }
     }
 
 
 
 
-
+    // Creates blue circle
     function createBlueCircle() {
         updateCanvas();
         if (endpt) {
@@ -57,19 +60,19 @@ window.onload = function () {
 
 
 
-
+    // Gets the coordinate on circle
     function getPoint(angle){
-        return [center.x+Math.cos(angle)*radius,center.y+Math.sin(angle)*radius];
+        return [center.x+(Math.cos(angle)*radius),center.y+(Math.sin(angle)*radius)];
     }
 
 
-
+    // Distance between two coordinates
     function getDistance(x1, y1, x2, y2){
         return Math.hypot(x1 - x2, y1 - y2);
     }
 
 
-
+    // Checks if coordinate is inside the circle
     function insideCircle(x, y){
         let formula = ((x-center.x)*(x-center.x))+((y-center.y)*(y-center.y));
         if(Math.sqrt(formula) < radius){
@@ -80,10 +83,12 @@ window.onload = function () {
 
 
 
+    // Finds the furthest blue square outside of the circle
     function findFurthestOutsideBlue(x,y, point){
 
         let distance = getDistance(x, y, point[0], point[1]);
         if(furthestOutsideBlue === null || distance > furthestOutsideBlue.distance){
+            console.log('changed!!!')
             furthestOutsideBlue = {
                 x: x,
                 y: y,
@@ -95,11 +100,10 @@ window.onload = function () {
     }
 
 
-
+    // Finds the furthest blue square inside the circle 
     function findFurthestInsideBlue(x, y, point){
         let distance = getDistance(x, y, point[0], point[1]);
         if(furthestInsideBlue === null || distance > furthestInsideBlue.distance){
-            console.log('changed!!!')
             furthestInsideBlue = {
                 x: x,
                 y: y,
@@ -111,13 +115,15 @@ window.onload = function () {
 
 
 
+    // Checks if square is close enough to the circle to be colored blue
     function getBlueSquares(xSquare, ySquare) {
 
         let point;
+
         for(let k=0; k<360; k++){
             point = getPoint(k);
             if(xSquare <= point[0]+5 && xSquare >= point[0]-5){
-                if(ySquare <= point[1]+10 && ySquare >= point[1]-10){
+                if(ySquare <= point[1]+11 && ySquare >= point[1]-11){
 
                     if(insideCircle(xSquare, ySquare)){
                         findFurthestInsideBlue(xSquare,ySquare, point);
@@ -129,7 +135,7 @@ window.onload = function () {
                 }
             }
             if(ySquare <= point[1]+5 && ySquare >= point[1]-5){
-                if(xSquare <= point[0]+10 && xSquare >= point[0]-10){
+                if(xSquare <= point[0]+11 && xSquare >= point[0]-11){
                     if(insideCircle(xSquare, ySquare)){
                         findFurthestInsideBlue(xSquare,ySquare, point);
                     }
@@ -145,8 +151,9 @@ window.onload = function () {
 
 
 
+
+    // Creates red circles based on furthest blue squares from circle
     function getRedCircles(){
-        
         if(furthestOutsideBlue.point[0]<=furthestOutsideBlue.x){
 
             if(furthestOutsideBlue.point[1]<=furthestOutsideBlue.y){
@@ -172,33 +179,6 @@ window.onload = function () {
             }
         }
 
-
-        // if(furthestInsideBlue.point[0]<=furthestInsideBlue.x){
-        //     if(furthestInsideBlue.point[1]<=furthestInsideBlue.y){
-        //         //  of circle
-        //         console.log('bottom left');
-        //         largeRedRadius = getDistance(center.x, center.y, furthestInsideBlue.x-1, furthestInsideBlue.y-21);
-        //     }
-        //     else{
-        //         // TOP LEFT of circle
-        //         console.log('top left');
-        //         largeRedRadius = getDistance(center.x, center.y, furthestInsideBlue.x-1, furthestInsideBlue.y+1);
-        //     }
-        // }
-        // else{
-        //     if(furthestInsideBlue.point[1]<=furthestInsideBlue.y){
-        //         // BOTTOM RIGHT of circle
-        //         console.log('bottom right');
-        //         largeRedRadius = getDistance(center.x, center.y, furthestInsideBlue.x+21, furthestInsideBlue.y-21);
-        //     }
-        //     else{
-        //         // TOP RIGHT of circle
-        //         console.log('bottom right');
-        //         largeRedRadius = getDistance(center.x, center.y, furthestInsideBlue.x+21, furthestInsideBlue.y+1);
-
-        //     }
-        // }
-
         console.log('large red radius: ', largeRedRadius);
         console.log('radius: ', radius);
     
@@ -207,8 +187,6 @@ window.onload = function () {
         ctx.strokeStyle = "red";
         ctx.arc(center.x, center.y, largeRedRadius, 0, 2 * Math.PI);
         ctx.stroke();
-
-        
         return;
     }
 
@@ -254,8 +232,8 @@ window.onload = function () {
             y: e.offsetY
         }
         createBlueCircle();
-        getBlueSquares();
-        getRedCircles();
+        //getBlueSquares();
+        //getRedCircles();
     }
 
 
