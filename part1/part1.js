@@ -88,6 +88,11 @@ window.onload = function () {
             radius = getDistance(center.x, center.y, movingMouse.x, movingMouse.y);
         }
 
+        if (radius < 0){
+            alert('Make sure you click and DRAG the mouse to set the radius');
+            location.reload();
+        }
+
         ctx.beginPath();
         ctx.strokeStyle = "blue";
         ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
@@ -103,6 +108,11 @@ window.onload = function () {
         smallRedRadius = radius;
         let r1 = outsideCircle(largeRedRadius);
         let r2 = insideCircle(smallRedRadius);
+     
+        if (r1 <= 0 || r2<=0){
+            alert('Make sure you click DRAG the mouse to set the radius');
+            location.reload();
+        }
 
         ctx.beginPath();
         ctx.strokeStyle = "red";
@@ -233,6 +243,7 @@ window.onload = function () {
                 x: e.offsetX,
                 y: e.offsetY
             }
+            console.log('ufsgaiflj')
             createBlueCircle()
         }
     }
@@ -243,6 +254,10 @@ window.onload = function () {
         endpt = {
             x: e.offsetX,
             y: e.offsetY
+        }
+
+        if(endpt === center){
+            console.log('hereee!')
         }
         createBlueCircle();
     }
