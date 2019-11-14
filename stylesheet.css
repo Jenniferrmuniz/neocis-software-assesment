@@ -3,6 +3,15 @@ h1{
     margin: 25px;
 }
 
+
+#link-wrapper{
+    margin: 50px;
+    width: 400px;
+    font-size: 24px;
+    display: flex;
+    justify-content: space-around;
+}
+
 #canvas-wrapper{
     margin-top: 100px;
     display:flex;
@@ -12,4 +21,6 @@ h1{
 #canvas {
     border: 1px solid black;
 }
+
+
 
