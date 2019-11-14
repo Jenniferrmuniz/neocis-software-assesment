@@ -250,7 +250,6 @@ window.onload = function () {
             }
             createBlueCircle()
         }
-
     }
 
 
