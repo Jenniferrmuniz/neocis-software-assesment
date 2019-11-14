@@ -6,6 +6,7 @@ window.onload = function () {
     let clickedCoordinate = null;
     let blueSquares = [];
 
+
     // Creates squares array
     function getSquares() {
         let counter = 1;
@@ -17,8 +18,8 @@ window.onload = function () {
                     width: 20,
                     height: 20,
                     centerOfSquare: {
-                        x: i+10,
-                        y: j+10
+                        x: i + 10,
+                        y: j + 10
                     }
                 }
                 counter++;
@@ -26,89 +27,45 @@ window.onload = function () {
         }
     }
 
+
     // Fills grid with squares
     function fillGrid() {
         for (let i = 1; i < squares.length; i++) {
 
-            if(blueSquares.includes(squares[i])){
+            if (blueSquares.includes(squares[i])) {
                 ctx.fillStyle = "blue";
             }
-            else{
+            else {
                 ctx.fillStyle = "gray";
             }
             ctx.fillRect(squares[i].x, squares[i].y, 10, 10);
         }
     }
 
-    // Checks if point selected is on square
-    function checkCollision(point, square) {
-        if (point.x < square.x + square.width &&
-            point.x + point.width > square.x &&
-            point.y < square.y + square.height &&
-            point.y + point.height > square.y) {
-            return true;
-        }
+
+    //Updating canvas 
+    function updateCanvas() {
+        ctx.clearRect(0, 0, 430, 430);
+        fillGrid();
     }
 
+
     // Finds squares selected and saves in blueSquares array
-    function getBlueSquare(coordinate){
-        for(let i=1; i<squares.length; i++){
-            if(checkCollision(coordinate, squares[i])){
+    function getBlueSquare(coordinate) {
+        for (let i = 1; i < squares.length; i++) {
+            if (checkCollision(coordinate, squares[i])) {
                 blueSquares.push(squares[i]);
                 updateCanvas();
             }
         }
     }
 
-    // Gets the average X coordinates of blue squares
-    function getAverageX(){
-        let sum = 0;
-        for(let i=0; i<blueSquares.length; i++){
-            sum +=blueSquares[i].x;
-        }
-        return (sum/blueSquares.length);
-    }
-
-    // Gets the average Y coordinates of blue squares
-    function getAverageY(){
-        let sum = 0;
-        for(let i=0; i<blueSquares.length; i++){
-            sum +=blueSquares[i].y;
-        }
-        return (sum/blueSquares.length);
-    }
-
-    // Returns the average center coordinate of blue squares
-    function getCenter(){
-        return {
-            x: getAverageX(),
-            y: getAverageY()
-        }
-    }
-
-
-    // Returns the distance between two points
-    function getDistance(point, center){
-        return Math.hypot(point.x - center.x, point.y - center.y);
-    }
-
-
-    // Average distance between the center and the blue squares
-    function getAverageDistance(distances){
-        let sum = 0;
-        for(let i=0; i<distances.length; i++){
-            sum += distances[i];
-        }
-        return (sum/distances.length);
-    }
-
-
 
     // Generates blue circle based on blue squares
-    function generateCircle(){
+    function generateCircle() {
         let center = getCenter();
         let distances = [];
-        for(let i=0; i<blueSquares.length; i++){
+        for (let i = 0; i < blueSquares.length; i++) {
             distances.push(getDistance(blueSquares[i], center));
         }
         let radius = getAverageDistance(distances);
@@ -121,10 +78,66 @@ window.onload = function () {
     }
 
 
+    // Checks if point selected is on square
+    function checkCollision(point, square) {
+        if (point.x < square.x + square.width &&
+            point.x + point.width > square.x &&
+            point.y < square.y + square.height &&
+            point.y + point.height > square.y) {
+            return true;
+        }
+    }
+
+
+    // Returns the average center coordinate of blue squares
+    function getCenter() {
+        return {
+            x: getAverageX(),
+            y: getAverageY()
+        }
+    }
+
+
+    // Gets the average X coordinates of blue squares
+    function getAverageX() {
+        let sum = 0;
+        for (let i = 0; i < blueSquares.length; i++) {
+            sum += blueSquares[i].centerOfSquare.x;
+        }
+        return (sum / blueSquares.length);
+    }
+
+
+    // Gets the average Y coordinates of blue squares
+    function getAverageY() {
+        let sum = 0;
+        for (let i = 0; i < blueSquares.length; i++) {
+            sum += blueSquares[i].centerOfSquare.y;
+        }
+        return (sum / blueSquares.length);
+    }
+
+
+    // Returns the distance between two points
+    function getDistance(square, center) {
+        return Math.hypot(square.centerOfSquare.x - center.x, square.centerOfSquare.y - center.y);
+    }
+
+
+    // Average distance between the center and the blue squares
+    function getAverageDistance(distances) {
+        let sum = 0;
+        for (let i = 0; i < distances.length; i++) {
+            sum += distances[i];
+        }
+        return (sum / distances.length);
+    }
+
+
     getSquares();
     fillGrid();
 
-    canvas.onmousedown = function(e){
+    canvas.onmousedown = function (e) {
         updateCanvas();
         clickedCoordinate = {
             x: e.offsetX,
@@ -140,12 +153,4 @@ window.onload = function () {
         generateCircle();
     }
 
-
-
-    //Updating canvas 
-    function updateCanvas() {
-        ctx.clearRect(0, 0, 430, 430);
-        fillGrid();
-        getAverageX();
-    }
 }
