@@ -43,7 +43,6 @@ window.onload = function () {
 
     function getFurthest(index, point) {
 
-        // let newDistance = getDistance(center.x, center.y, squares[index].x, squares[index].y);
         let newDistance = getDistance(point.x, point.y, squares[index].x, squares[index].y);
 
         if (isInsideCircle(index)) {
