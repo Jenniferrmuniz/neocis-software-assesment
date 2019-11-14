@@ -13,6 +13,7 @@ window.onload = function () {
     let largeRedRadius = null;
     let squares = [];
     let blueSquares = [];
+    let alerted = false;
 
 
     // Creates squares array
@@ -88,11 +89,6 @@ window.onload = function () {
             radius = getDistance(center.x, center.y, movingMouse.x, movingMouse.y);
         }
 
-        if (radius < 0){
-            alert('Make sure you click and DRAG the mouse to set the radius');
-            location.reload();
-        }
-
         ctx.beginPath();
         ctx.strokeStyle = "blue";
         ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
@@ -110,7 +106,10 @@ window.onload = function () {
         let r2 = insideCircle(smallRedRadius);
      
         if (r1 <= 0 || r2<=0){
-            alert('Make sure you click DRAG the mouse to set the radius');
+            if(!alerted){
+                alert('Make sure you click and DRAG the mouse to set the radius!');
+                alerted = true;
+            }
             location.reload();
         }
 
