@@ -14,7 +14,8 @@ window.onload = function () {
     let squares = [];
     let blueSquares = [];
 
-    getSquares();
+ 
+
     // Creates squares array
     function getSquares() {
         let counter = 1;
@@ -31,6 +32,7 @@ window.onload = function () {
         }
     }
 
+    // Checks if square is inside the circle
     function isInsideCircle(index) {
         let centerOfSquareX = squares[index].x + 10;
         let centerOfSquareY = squares[index].y + 10;
@@ -41,10 +43,11 @@ window.onload = function () {
         return false;
     }
 
+
+    // Find the blue squares with the furthest distance inside and outside of circle
     function getFurthest(index, point) {
 
         let newDistance = getDistance(point.x, point.y, squares[index].x, squares[index].y);
-
         if (isInsideCircle(index)) {
             if (furthestInsideBlue === null || furthestInsideBlue.distance < newDistance) {
                 furthestInsideBlue = {
@@ -111,8 +114,7 @@ window.onload = function () {
 
 
 
-
-    // Gets the coordinate on circle
+    // Gets the coordinate of point on circle
     function getPoint(angle, r) {
         return {
             x: center.x + (Math.cos(angle) * r),
@@ -123,18 +125,11 @@ window.onload = function () {
     }
 
 
+
     // Distance between two coordinates
     function getDistance(x1, y1, x2, y2) {
         return Math.hypot(x1 - x2, y1 - y2);
     }
-
-
-
-
-
-
-
-
 
 
 
@@ -156,8 +151,7 @@ window.onload = function () {
     }
 
 
-
-
+    // Creates red circles
     function createRedCircles() {
 
         largeRedRadius = radius;
@@ -178,6 +172,7 @@ window.onload = function () {
         return;
     }
 
+    // Inner red circle
     function insideCircle(r) {
         for (let i = 0; i < blueSquares.length; i++) {
             for (let k = 0; k < 360; k += 5) {
@@ -191,6 +186,7 @@ window.onload = function () {
         return smallRedRadius;
     }
 
+    // Outter red circle
     function outsideCircle(r) {
         for (let i = 0; i < blueSquares.length; i++) {
             for (let k = 0; k < 360; k += 5) {
@@ -200,7 +196,6 @@ window.onload = function () {
                     largeRedRadius+=1;
                     return outsideCircle(largeRedRadius);
                 }
-
             }
         }
         return largeRedRadius;
@@ -208,15 +203,12 @@ window.onload = function () {
 
 
 
-
-
-
-
-    function checkCollision(rect1, rect2) {
-        if (rect1.x < rect2.x + rect2.width &&
-            rect1.x + rect1.width > rect2.x &&
-            rect1.y < rect2.y + rect2.height &&
-            rect1.y + rect1.height > rect2.y) {
+    // Checks if point collides with square
+    function checkCollision(point, square) {
+        if (point.x < square.x + square.width &&
+            point.x + point.width > square.x &&
+            point.y < square.y + square.height &&
+            point.y + point.height > square.y) {
             return true;
         }
     }
@@ -224,12 +216,7 @@ window.onload = function () {
 
 
 
-
-
-
-
-
-
+    getSquares();
     fillGrid();
 
     // When mouse is originally clicked
