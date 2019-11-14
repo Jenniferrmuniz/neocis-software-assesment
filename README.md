@@ -1,5 +1,7 @@
 # Neocis Software Assesment
- 
+
+[Click here to check out the demo!](https://jenniferrmuniz.github.io/neocis-software-assesment/index.html)
+
 -----
 
 ## Part 1
