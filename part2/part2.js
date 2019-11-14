@@ -106,8 +106,8 @@ window.onload = function () {
 
     // Generates blue circle based on blue squares
     function generateCircle(){
-        let distances = [];
         let center = getCenter();
+        let distances = [];
         for(let i=0; i<blueSquares.length; i++){
             distances.push(getDistance(blueSquares[i], center));
         }

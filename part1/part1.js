@@ -14,7 +14,7 @@ window.onload = function () {
     let squares = [];
     let blueSquares = [];
 
- 
+
 
     // Creates squares array
     function getSquares() {
@@ -193,7 +193,7 @@ window.onload = function () {
                 point = getPoint(k * (Math.PI / 180), r);
 
                 if (checkCollision(point, blueSquares[i])) {
-                    largeRedRadius+=1;
+                    largeRedRadius += 1;
                     return outsideCircle(largeRedRadius);
                 }
             }
@@ -211,6 +211,13 @@ window.onload = function () {
             point.y + point.height > square.y) {
             return true;
         }
+    }
+
+
+    //Updating canvas 
+    function updateCanvas() {
+        ctx.clearRect(0, 0, 430, 430);
+        fillGrid();
     }
 
 
@@ -247,14 +254,6 @@ window.onload = function () {
             y: e.offsetY
         }
         createBlueCircle();
-    }
-
-
-
-    //Updating canvas 
-    function updateCanvas() {
-        ctx.clearRect(0, 0, 430, 430);
-        fillGrid();
     }
 }
 
